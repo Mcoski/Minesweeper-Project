@@ -141,7 +141,3 @@ if mode == 0: # Beginner Mode
         print(color.YELLOW + f"You used {rounds} rounds and {elapsed} seconds/{minutes} minutes finish this game!" + color.END)
     elif lose == True:
         print(color.RED + "You Lose!" + color.END)
-    
-elif mode == 1:
-    create_map(9, 9)
-    show(sol_map)
