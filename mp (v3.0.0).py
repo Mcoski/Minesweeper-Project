@@ -22,7 +22,7 @@ def show(tmap): # Display Map
         print("")
 
 def coordinate(tmap): # Set Coordinate To The Map
-        for i in range(0, len(tmap)): # Border Coordinate
+        for i in range(0, len(tmap)): # 4-sides Border Coordinate
             tmap[i][0] = color.BOLD + color.GREEN + str(i) + color.END # Left Column
             tmap[i][len(tmap)-1] = color.BOLD + color.GREEN + str(i) + color.END # Right Column
             tmap[len(tmap)-1][i] = color.BOLD + color.GREEN  + str(i) + color.END #Bottom Column
@@ -37,12 +37,12 @@ def create_map(w, h): # Create A n*n Default Solution & Answer Map
     global sol_map, ans_map
     sol_map = [[0 for i in range(w+2)]for j in range(h+2)] # Solution, won't show
     ans_map = [["N" for i in range(w+2)]for j in range(h+2)] # Answer, for user
-    coordinate(sol_map)
+    coordinate(sol_map) # Both Sol & Ans Also Need To Add Coordinates
     coordinate(ans_map)
 
 print(color.PURPLE + "This is the 'Minesweeper Project (v3.0.0)'!" + color.END)
 print(color.PURPLE + "You will have 3 modes to choose: Beginner, Intermediate and Expert" + color.END)
-mode = int(input(color.PURPLE + "Please enter which mode you want (0: Beginner, 1: Intermediate, 2: Expert): " + color.END))
+mode = int(input(color.PURPLE + "Please enter which mode you want (0: Beginner, 1: Intermediate, 2: Expert): " + color.END)) # Mode Choose
 
 while (mode != 0) and (mode != 1) and (mode != 2): # Re-enter for invalid input
     print(color.RED + "Invalid Input!" + color.END)
@@ -74,9 +74,9 @@ if mode == 0: # Beginner Mode
                 if sol_map[x+1][y-1] == "#": sol_map[x][y] += 1
                 if sol_map[x][y-1] == "#": sol_map[x][y] += 1
 
-    show(ans_map)
-    start_time = t.time()
-    while win == False and lose == False:
+    show(ans_map) # Show Initial Map
+    start_time = t.time() # Starting Time
+    while win == False and lose == False: # Start Guessing
         command = input(color.PURPLE + "Please enter your move: " + color.END)# Enter command 
         c = command
         while (c[0] != "m" and c[0] != "f" and c[0] != "r") or (len(command) != 3) or (not(c[1].isdigit() and c[2].isdigit())):
@@ -86,9 +86,9 @@ if mode == 0: # Beginner Mode
         
         if command[0] == "m": # Mine
             x, y = int(command[1]), int(command[2])
-            if ans_map[x][y] == color.RED + "F" + color.END:
+            if ans_map[x][y] == color.RED + "F" + color.END: # Mining Flagged Block Error
                 print(color.RED + "Invalid for mining flagged blocks!" + color.RED)
-            elif x < 1 or y < 1:
+            elif x < 1 or y < 1: # Invalid Coordinates
                 print(color.RED + "Invalid Coordinate(s)!" + color.END)
                 if round == 0 or command[0] not in history:
                     lastx, lasty = 0, 0
@@ -96,7 +96,7 @@ if mode == 0: # Beginner Mode
                 if rounds == 0 or command[0] not in history: # Bold and blue the current chose
                     ans_map[x][y] = color.BOLD + color.BLUE + str(sol_map[x][y]) + color.END
                 else:
-                    ans_map[lastx][lasty] = sol_map[lastx][lasty]
+                    ans_map[lastx][lasty] = sol_map[lastx][lasty] 
                     ans_map[x][y] = color.BOLD + color.BLUE + str(sol_map[x][y]) + color.END
                 lastx, lasty = x, y
                 if sol_map[x][y] == "#": # Lose Condition
@@ -105,38 +105,38 @@ if mode == 0: # Beginner Mode
         
         if command[0] == "f": # Flag
             x, y = int(command[1]), int(command[2])
-            if ans_map[x][y] != "N":
+            if ans_map[x][y] != "N": # Flagging Mined Block Error
                 print(color.RED + "Invalid for flagging mined blocks!" + color.END)
-            elif x < 1 or y < 1:
+            elif x < 1 or y < 1: # Invalid Coordinates
                 print(color.RED + "Invalid Coordinate(s)!" + color.END)
             elif ans_map[x][y] == "N":
                 ans_map[x][y] = color.RED + "F" + color.END
-                flag.append([x, y])
-                flag.sort()
+                flag.append([x, y]) # Add To Flag List for compare
+                flag.sort() # Sorting for compare (values same but wrong sequence will be False)
                 print(f"{9-len(mine)} mine(s) remain")
                 if flag == mine: # Win Condition
                     win = True
         
         if command[0] == "r": # Remove Flag
             x, y = int(command[1]), int(command[2])
-            if ans_map[x][y] != color.RED + "F" + color.END:
+            if ans_map[x][y] != color.RED + "F" + color.END: # Removing Mined Block Error
                 print(color.RED + "Invalid for removing mined blocks!" + color.END)
-            elif x < 1 or y < 1:
+            elif x < 1 or y < 1: # Invalid Coordinates
                 print(color.RED + "Invalid Coordinate(s)!" + color.END)
             elif ans_map[x][y] == color.RED + "F" + color.END:
                 ans_map[x][y] = "N"
-                i = flag.index([x, y])
-                flag.pop(i)
+                i = flag.index([x, y]) # Find Misplaced Flag Index
+                flag.pop(i) # Pop out the Flag
                 print(f"{9-len(mine)} mine(s) remain")
         
-        show(ans_map)
-        rounds += 1
-        history.append(command[0]) 
+        show(ans_map) # Show Current Map Status
+        rounds += 1 # Add round
+        history.append(command[0]) # Add Process 
     
     if win == True: # Win-lose
-        end_time = t.time()
-        elapsed = round(end_time - start_time)
-        minutes = round(elapsed/60)
+        end_time = t.time() # Ending Time
+        elapsed = round(end_time - start_time) # Seconds Passed
+        minutes = round(elapsed/60) # Minutes Passed
         print(color.YELLOW + color.BOLD + "You Win!" + color.END)
         print(color.YELLOW + f"You used {rounds} rounds and {elapsed} seconds/{minutes} minutes finish this game!" + color.END)
     elif lose == True:
